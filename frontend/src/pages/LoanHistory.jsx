@@ -94,7 +94,6 @@ export default function LoanHistory() {
         <div className="flex items-start justify-between mb-10 flex-wrap gap-4">
           <div>
             <div className="inline-flex items-center gap-2 bg-brand-500/10 border border-brand-500/20 text-brand-500 rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-widest mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-500 inline-block" />
               Your Applications
             </div>
             <h1 style={{ fontFamily: '"DM Serif Display", serif' }} className="text-4xl text-white font-normal mb-2">
