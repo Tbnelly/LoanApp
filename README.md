@@ -198,26 +198,3 @@ https://github.com/Tbnelly
 
 ---
 
-# ⭐ Small Tips Before You Submit
-
-Make sure your repo also has:
-
-### 1️⃣ `.gitignore`
-If not, add:
-
-
-node_modules
-.env
-bin
-obj
-dist
-
-
----
-
-### 2️⃣ Commit the README
-
-```bash
-git add README.md
-git commit -m "Added project README"
-git push
