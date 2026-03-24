@@ -61,7 +61,6 @@ export default function SignIn() {
         {/* Middle: hero copy */}
         <div className="relative z-10">
           <div className="inline-flex items-center gap-2 bg-brand-500/10 border border-brand-500/20 text-brand-500 rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-widest mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-500 inline-block" />
             Secure &amp; Instant
           </div>
 

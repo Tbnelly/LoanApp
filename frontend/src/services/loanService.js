@@ -1,63 +1,49 @@
-// src/services/loanService.js
-import {
-  collection, addDoc, getDocs, updateDoc,
-  query, where, serverTimestamp, doc, deleteDoc
-} from 'firebase/firestore'
-import { db } from './firebase'
+const API_BASE = import.meta.env.VITE_API_BASE_URL 
 
-const LOANS_COLLECTION = 'loans'
-
-// ── Save a new loan to Firestore ──────────────────────────────────────────────
-// After saving, we simulate an auto-approval after 10 seconds.
-// In a real app, a bank admin would manually change the status.
+// ── Submit a new loan application ────────────────────────────────────────────
 export async function saveLoanToFirestore(userId, userEmail, loanData) {
-  const docRef = await addDoc(collection(db, LOANS_COLLECTION), {
-    userId,
-    userEmail,
-    loanAmount:   loanData.loanAmount,
-    loanPurpose:  loanData.loanPurpose,
-    loanTerm:     loanData.loanTerm,
-    loanTermUnit: loanData.loanTermUnit,
-    status:       'pending',
-    createdAt:    serverTimestamp(),
+  const res = await fetch(`${API_BASE}/api/loans`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId,
+      userEmail,
+      loanAmount:   loanData.loanAmount,
+      loanPurpose:  loanData.loanPurpose,
+      loanTerm:     loanData.loanTerm,
+      loanTermUnit: loanData.loanTermUnit,
+    }),
   })
 
-  // ── Simulate auto-approval after 10 seconds (for demo purposes) ──
-  // Remove this setTimeout in a real production app.
-  setTimeout(async () => {
-    try {
-      await updateDoc(doc(db, LOANS_COLLECTION, docRef.id), {
-        status: 'approved'
-      })
-      console.log('✅ Loan auto-approved:', docRef.id)
-    } catch (err) {
-      console.warn('Could not auto-approve loan:', err.message)
-    }
-  }, 10000) // 10 seconds
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error || `Request failed (${res.status})`)
+  }
 
-  return docRef.id
+  const created = await res.json()
+  return created.id
 }
 
-// ── Get all loans for a user ──────────────────────────────────────────────────
+// ── Fetch all loans for a user ────────────────────────────────────────────────
 export async function getUserLoans(userId) {
-  const q = query(
-    collection(db, LOANS_COLLECTION),
-    where('userId', '==', userId)
-  )
-  const snapshot = await getDocs(q)
-  const loans = snapshot.docs.map(d => ({ id: d.id, ...d.data() }))
+  const res = await fetch(`${API_BASE}/api/loans/${userId}`)
 
-  // Sort newest first (client-side — avoids needing a Firestore index)
-  loans.sort((a, b) => {
-    const dateA = a.createdAt?.toDate?.() ?? new Date(0)
-    const dateB = b.createdAt?.toDate?.() ?? new Date(0)
-    return dateB - dateA
-  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error || `Request failed (${res.status})`)
+  }
 
-  return loans
+  return res.json() // returns array of loan objects
 }
 
 // ── Delete a loan ─────────────────────────────────────────────────────────────
 export async function deleteLoan(loanId) {
-  await deleteDoc(doc(db, LOANS_COLLECTION, loanId))
+  const res = await fetch(`${API_BASE}/api/loans/${loanId}`, {
+    method: 'DELETE',
+  })
+
+  if (!res.ok && res.status !== 404) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error || `Request failed (${res.status})`)
+  }
 }

@@ -74,12 +74,14 @@ export default function LoanHistory() {
   }
 
   const formatDate = (ts) => {
-    if (!ts) return 'N/A'
-    const d = ts.toDate ? ts.toDate() : new Date(ts)
-    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-  }
+  if (!ts) return 'N/A'
+  
+  const d = ts?.toDate ? ts.toDate() : new Date(ts)
+  if (isNaN(d.getTime())) return 'N/A'
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+}
 
-  // Summary stats
+  
   const total     = loans.length
   const approved  = loans.filter(l => l.status === 'approved').length
   const totalAmt  = loans.reduce((sum, l) => sum + (l.loanAmount || 0), 0)

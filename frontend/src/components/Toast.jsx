@@ -1,4 +1,3 @@
-// Reusable Toast — import and use in any page
 import { useEffect } from 'react'
 
 export default function Toast({ toast, onClose }) {

@@ -6,12 +6,12 @@ const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null)
-  const [loading, setLoading]         = useState(true) // true until Firebase responds
+  const [loading, setLoading]         = useState(true) 
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user)
-      setLoading(false) // Firebase has now confirmed logged in or out
+      setLoading(false) 
     })
     return unsubscribe
   }, [])
