@@ -1,4 +1,9 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL 
+// src/services/loanService.js
+// All loan operations go through the .NET backend API.
+// Firebase Auth stays on the frontend — userId and email come from the
+// logged-in Firebase user and are passed to the API.
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL // e.g. http://localhost:5066
 
 // ── Submit a new loan application ────────────────────────────────────────────
 export async function saveLoanToFirestore(userId, userEmail, loanData) {
@@ -21,6 +26,20 @@ export async function saveLoanToFirestore(userId, userEmail, loanData) {
   }
 
   const created = await res.json()
+
+
+  setTimeout(async () => {
+    try {
+      await fetch(`${API_BASE}/api/loans/${created.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'approved' }),
+      })
+    } catch (err) {
+      console.warn('Could not auto-approve loan:', err.message)
+    }
+  }, 10000)
+
   return created.id
 }
 
@@ -33,7 +52,7 @@ export async function getUserLoans(userId) {
     throw new Error(err.error || `Request failed (${res.status})`)
   }
 
-  return res.json() // returns array of loan objects
+  return res.json()
 }
 
 // ── Delete a loan ─────────────────────────────────────────────────────────────

@@ -30,7 +30,7 @@ export default function SignIn() {
     if (code === "auth/user-not-found")
       return "No account found with this email. Please sign up first.";
     if (code === "auth/wrong-password")
-      return "Incorrect password. Please try again.";
+      return "Incorrect email or password. Please try again.";
     if (code === "auth/invalid-credential")
       return "No account found with this email. Please sign up first.";
     if (code === "auth/too-many-requests")
